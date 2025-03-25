@@ -1,6 +1,8 @@
 using E_commerce.Data;
+using E_commerce.Repositories;
 using E_commerce.Repositories.Implementation;
 using E_commerce.Repositories.Interface;
+using E_commerce.Services;
 using E_commerce.Services.Implementation;
 using E_commerce.Services.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,14 +23,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddControllers();
 
 // Add your services
-builder.Services.AddScoped<IUserService, UserService>();  // Add your UserService
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUserService, UserService>();  
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+
 // Add your repositories
-builder.Services.AddScoped<IUserRepository, UserRepository>();  // Add your UserRepository
-
-
-
-
+builder.Services.AddScoped<IUserRepository, UserRepository>();  
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
