@@ -43,6 +43,7 @@ namespace E_commerce.Controllers
             {
                 Name = product.Name,
                 Description = product.Description,
+                StockQuantity= product.StockQuantity,
                 Price = product.Price,
                 CategoryId = product.CategoryId
             };
