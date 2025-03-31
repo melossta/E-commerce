@@ -16,6 +16,10 @@ namespace E_commerce.Repositories.Implementation
             _dbContext = dbContext;
         }
 
+        public async Task<bool> UserExistsAsync(int userId)
+        {
+            return await _dbContext.Users.AnyAsync(u => u.UserId == userId);
+        }
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _dbContext.Users

@@ -8,6 +8,7 @@ namespace E_commerce.Repositories.Interface
     public interface IUserRepository
     {
         Task<User> GetUserByEmailAsync(string email);
+        Task<bool> UserExistsAsync(int userId);
         Task<List<User>> GetAllUsersAsync();
         Task<User> GetUserByIdAsync(int id);
         Task<bool> AddUserAsync(User user);

@@ -1,10 +1,7 @@
 ﻿using E_commerce.Models.Domains;
 using E_commerce.Configurations;
-using E_commerce.Models.Domains;
 using E_commerce.Models.JunctionTables;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Org.BouncyCastle.Asn1.X509;
 
 namespace E_commerce.Data
 
