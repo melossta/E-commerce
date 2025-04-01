@@ -1,4 +1,5 @@
-﻿using E_commerce.Models.JunctionTables;
+﻿using E_commerce.Models.Enums;
+using E_commerce.Models.JunctionTables;
 
 namespace E_commerce.Models.Domains
 {
@@ -13,7 +14,7 @@ namespace E_commerce.Models.Domains
 
         public decimal TotalAmount { get; set; }
 
-        public string Status { get; set; } = "Pending"; // Enum: Pending, Shipped, Delivered, Canceled
+        public OrderStatus Status { get; set; }  // Enum: Pending, Shipped, Delivered, Canceled
 
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 

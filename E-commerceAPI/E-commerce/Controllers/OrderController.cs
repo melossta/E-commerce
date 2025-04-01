@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using E_commerce.Models.Enums;
 namespace E_commerce.Controllers
 {
     [Route("api/orders")]
@@ -59,7 +60,7 @@ namespace E_commerce.Controllers
 
         [HttpPut("{orderId}/status")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] string status)
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] OrderStatus status)
         {
             await _orderService.UpdateOrderStatusAsync(orderId, status);
             return NoContent();

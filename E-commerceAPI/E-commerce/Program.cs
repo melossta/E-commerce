@@ -31,6 +31,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShippingDetailsService, ShippingDetailsService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 
 // Add your repositories
@@ -40,6 +41,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IShippingDetailsRepository, ShippingDetailsRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 
 

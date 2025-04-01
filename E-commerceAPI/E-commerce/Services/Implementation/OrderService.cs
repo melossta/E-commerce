@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using E_commerce.Models.Enums;
 
 namespace E_commerce.Services.Implementation
 {
@@ -126,7 +127,7 @@ namespace E_commerce.Services.Implementation
                 UserId = userId,
                 ShippingDetailsId = shippingDetails.ShippingDetailsId,
                 OrderDate = DateTime.UtcNow,
-                Status = "Pending",
+                Status = OrderStatus.Pending,
                 TotalAmount = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price),
                 OrderItems = cart.CartItems.Select(ci => new OrderItem
                 {
@@ -222,7 +223,7 @@ namespace E_commerce.Services.Implementation
             return await _orderRepository.GetAllOrdersAsync();
         }
 
-        public async Task UpdateOrderStatusAsync(int orderId, string status)
+        public async Task UpdateOrderStatusAsync(int orderId, OrderStatus status)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);
             if (order == null) throw new KeyNotFoundException("Order not found.");
