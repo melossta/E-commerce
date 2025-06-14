@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using E_commerce.Models.Enums;
+using AutoMapper;
 
 namespace E_commerce.Services.Implementation
 {
@@ -19,13 +20,15 @@ namespace E_commerce.Services.Implementation
         private readonly IShoppingCartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
         private readonly IShippingDetailsRepository _shippingDetailsRepository;
+        private readonly IMapper _mapper;
 
-        public OrderService(IOrderRepository orderRepository, IShoppingCartRepository cartRepository, IProductRepository productRepository,IShippingDetailsRepository shippingDetailsRepository)
+        public OrderService(IOrderRepository orderRepository, IShoppingCartRepository cartRepository, IProductRepository productRepository,IShippingDetailsRepository shippingDetailsRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
             _cartRepository = cartRepository;
             _productRepository = productRepository;
             _shippingDetailsRepository = shippingDetailsRepository;
+            _mapper = mapper;
         }
 
         //public async Task<Order> PlaceOrderAsync(int userId)
@@ -167,6 +170,53 @@ namespace E_commerce.Services.Implementation
                 }).ToList()
             };
         }
+
+        public async Task<OrderDto> PlaceSingleProductOrderAsync(int userId, int productId, int quantity)
+        {
+            if (quantity <= 0)
+                throw new ArgumentException("Quantity must be greater than zero.");
+
+            var product = await _productRepository.GetProductByIdAsync(productId);
+            if (product == null)
+                throw new ArgumentException("Product not found.");
+
+            if (product.StockQuantity < quantity)
+                throw new ArgumentException("Insufficient stock for product.");
+
+            var shippingDetails = await _shippingDetailsRepository.GetByUserIdAsync(userId);
+            if (shippingDetails == null)
+                throw new ArgumentException("User has no shipping details saved.");
+
+            var order = new Order
+            {
+                UserId = userId,
+                OrderDate = DateTime.UtcNow,
+                ShippingDetailsId = shippingDetails.ShippingDetailsId,
+                Status = OrderStatus.Pending,
+                TotalAmount = product.Price * quantity,
+                OrderItems = new List<OrderItem>
+        {
+            new OrderItem
+            {
+                ProductId = product.ProductId,
+                Quantity = quantity,
+                UnitPrice = product.Price
+            }
+        }
+            };
+
+            // Deduct stock
+            product.StockQuantity -= quantity;
+            await _productRepository.UpdateProductAsync(product);
+
+            var createdOrder = await _orderRepository.CreateOrderAsync(order);
+
+            // ✅ Use AutoMapper here
+            return _mapper.Map<OrderDto>(createdOrder);
+        }
+
+
+
 
 
 

@@ -18,20 +18,19 @@ namespace HippAdministrata.Controllers
             _jwtService = jwtService;
         }
 
-        // POST: api/auth/register
         [HttpPost("register")]
         public async Task<ActionResult> RegisterAsync([FromBody] RegisterRequest request)
         {
-            // Call the RegisterAsync method in JwtService to register the user
             var success = await _jwtService.RegisterAsync(request);
 
             if (!success)
             {
-                return BadRequest("Registration failed. The user may already exist.");
+                return BadRequest(new { message = "Registration failed. The user may already exist." });
             }
 
-            return Ok("User successfully registered");
+            return Ok(new { message = "User successfully registered" });
         }
+
 
         // POST: api/auth/login
         [HttpPost("login")]

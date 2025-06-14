@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using E_commerce.Models.Enums;
+using E_commerce.Repositories.Interface;
 namespace E_commerce.Controllers
 {
     [Route("api/orders")]
@@ -17,10 +18,13 @@ namespace E_commerce.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly ILogger<OrderController> _logger;
-        public OrderController(IOrderService orderService, ILogger<OrderController> logger)
+        private readonly IUserRepository _userRepository;
+
+        public OrderController(IOrderService orderService, ILogger<OrderController> logger, IUserRepository userRepository)
         {
             _orderService = orderService;
             _logger = logger;
+            _userRepository = userRepository;
         }
 
         [HttpPost("place")]
@@ -37,6 +41,29 @@ namespace E_commerce.Controllers
             {
                 _logger.LogError(ex, "Error placing order");
                 return StatusCode(500, new { message = ex.Message, details = ex.InnerException?.Message });
+            }
+        }
+
+        [HttpPost("place-single")]
+        [Authorize]
+        public async Task<IActionResult> PlaceSingleProductOrder(int userId, int productId, int quantity)
+        {
+            var userExists = await _userRepository.UserExistsAsync(userId);
+            if (!userExists)
+                return NotFound("User not found");
+
+            try
+            {
+                var order = await _orderService.PlaceSingleProductOrderAsync(userId, productId, quantity);
+                return Ok(order);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while placing the order.");
             }
         }
 

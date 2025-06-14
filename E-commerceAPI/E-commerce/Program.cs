@@ -1,4 +1,5 @@
 using E_commerce.Data;
+using E_commerce.Helpers;
 using E_commerce.Repositories;
 using E_commerce.Repositories.Implementation;
 using E_commerce.Repositories.Interface;
@@ -10,6 +11,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using AutoMapper;
+using E_commerce.Helpers;
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +28,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDevClient", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") // your Angular app URL
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 // Add your services
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -42,6 +57,13 @@ builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IShippingDetailsRepository, ShippingDetailsRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+//Add AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
+
+
 
 
 
@@ -101,6 +123,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAngularDevClient");
 app.UseAuthentication();
 app.UseAuthorization();
 

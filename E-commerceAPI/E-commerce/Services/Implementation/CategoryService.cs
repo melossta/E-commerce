@@ -1,4 +1,5 @@
 ﻿using E_commerce.Models.Domains;
+using E_commerce.Models.DTOs;
 using E_commerce.Repositories;
 
 namespace E_commerce.Services
@@ -12,10 +13,27 @@ namespace E_commerce.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+        //public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+        //{
+        //    return await _categoryRepository.GetAllCategoriesAsync();
+        //}
+        public async Task<IEnumerable<CategorySummaryDto>> GetAllCategoriesAsync()
         {
-            return await _categoryRepository.GetAllCategoriesAsync();
+            var categories = await _categoryRepository.GetAllCategoriesAsync();
+
+            // Map to DTOs
+            var categoryDtos = categories.Select(c => new CategorySummaryDto
+            {
+                CategoryId = c.CategoryId,
+                Name = c.Name,
+                Description = c.Description
+            });
+
+            return categoryDtos;
         }
+
+
+
 
         public async Task<Category> GetCategoryByIdAsync(int categoryId)
         {

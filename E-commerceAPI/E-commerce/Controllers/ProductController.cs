@@ -76,6 +76,7 @@ namespace E_commerce.Controllers
             product.Name = productUpdate.Name;
             product.Description = productUpdate.Description;
             product.Price = productUpdate.Price;
+            product.StockQuantity = productUpdate.StockQuantity;
             product.CategoryId = productUpdate.CategoryId;
 
 

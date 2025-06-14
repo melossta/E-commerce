@@ -23,6 +23,7 @@ namespace E_commerce.Controllers
             return Ok(categories);
         }
 
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
@@ -66,7 +67,7 @@ namespace E_commerce.Controllers
 
             await _categoryService.UpdateCategoryAsync(category);
 
-            return NoContent();
+            return Ok(category);
         }
 
 
@@ -75,7 +76,7 @@ namespace E_commerce.Controllers
         public async Task<IActionResult> DeleteCategory(int id)
         {
             await _categoryService.DeleteCategoryAsync(id);
-            return NoContent();
+            return Ok(new {message="Category Deleted succesfully"});
         }
     }
 }

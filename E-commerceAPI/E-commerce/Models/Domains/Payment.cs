@@ -6,7 +6,8 @@ namespace E_commerce.Models.Domains
     {
         public int PaymentId { get; set; }
 
-        public int OrderId { get; set; } // Foreign Key
+        public int OrderId { get; set; }
+        public string TransactionId { get; set; }
         public Order Order { get; set; }
 
         public decimal Amount { get; set; }
@@ -19,6 +20,7 @@ namespace E_commerce.Models.Domains
 
         /*public string Status { get; set; } = "Processing";*/ // Enum: Processing, Completed, Failed
         public OrderStatus Status { get; set; }
+
     }
 
 }

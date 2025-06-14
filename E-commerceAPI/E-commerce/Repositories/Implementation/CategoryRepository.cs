@@ -15,13 +15,12 @@ namespace E_commerce.Repositories
 
         public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
         {
-            return await _context.Categories.Include(c => c.Products).ToListAsync();
+            return await _context.Categories.ToListAsync();
         }
 
         public async Task<Category> GetCategoryByIdAsync(int categoryId)
         {
             return await _context.Categories
-                .Include(c => c.Products)
                 .FirstOrDefaultAsync(c => c.CategoryId == categoryId);
         }
 
