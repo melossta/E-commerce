@@ -8,11 +8,13 @@ namespace E_commerce.Services
 {
     public interface IShippingDetailsService
     {
-        Task<ShippingDetails> GetShippingDetailsByUserIdAsync(int userId);
-        //Task<ShippingDetails?> GetShippingDetailsByIdAsync(int id);
-        Task<IEnumerable<ShippingDetails>> GetAllShippingDetailsAsync();
+       
+        Task<ShippingDetailsDto> GetShippingDetailsByUserIdAsync(int userId);
+        Task<ShippingDetailsDto> GetByShippingDetailsIdAsync(int id);
+        Task<IEnumerable<ShippingDetailsDto>> GetAllShippingDetailsAsync();
         Task<ShippingDetailsDTO> AddShippingDetailsAsync(int userId, ShippingDetailsCreateDTO shippingDetailsDTO);
-        Task<bool> UpdateShippingDetailsAsync(ShippingDetailsUpdateDTO shippingDetailsDTO);
+        Task<bool> UpdateShippingDetailsAsync(int id, ShippingDetailsUpdateDTO shippingDetailsDTO);
         Task<bool> DeleteShippingDetailsAsync(int id);
+
     }
 }

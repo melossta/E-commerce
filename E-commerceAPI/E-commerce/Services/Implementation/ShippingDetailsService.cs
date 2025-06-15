@@ -16,13 +16,9 @@ namespace E_commerce.Services
             _shippingDetailsRepository = shippingDetailsRepository;
         }
 
-        //public async Task<ShippingDetails?> GetShippingDetailsByIdAsync(int id)
-        //{
-        //    return await _shippingDetailsRepository.GetByIdAsync(id);
-        //}
-        public async Task<ShippingDetails> GetShippingDetailsByUserIdAsync(int userId)
+
+        public async Task<ShippingDetailsDto> GetShippingDetailsByUserIdAsync(int userId)
         {
-            // You may also include any validation logic here
             var shippingDetails = await _shippingDetailsRepository.GetByUserIdAsync(userId);
 
             if (shippingDetails == null)
@@ -30,13 +26,59 @@ namespace E_commerce.Services
                 throw new KeyNotFoundException($"Shipping details not found for UserId: {userId}");
             }
 
-            return shippingDetails;
+            return new ShippingDetailsDto
+            {
+                ShippingDetailsId = shippingDetails.ShippingDetailsId,
+                UserId = shippingDetails.UserId,
+                UserName = shippingDetails.User?.Name,
+                Address = shippingDetails.Address,
+                City = shippingDetails.City,
+                PostalCode = shippingDetails.PostalCode,
+                Country = shippingDetails.Country,
+                PhoneNumber = shippingDetails.PhoneNumber
+            };
         }
 
-        public async Task<IEnumerable<ShippingDetails>> GetAllShippingDetailsAsync()
+
+        public async Task<ShippingDetailsDto> GetByShippingDetailsIdAsync(int id)
         {
-            return await _shippingDetailsRepository.GetAllAsync();
+            var shippingDetails = await _shippingDetailsRepository.GetByShippingDetailsIdAsync(id);
+
+            if (shippingDetails == null)
+                return null;
+
+            return new ShippingDetailsDto
+            {
+                ShippingDetailsId = shippingDetails.ShippingDetailsId,
+                UserId = shippingDetails.UserId,
+                UserName = shippingDetails.User?.Name,  // safe navigation
+                Address = shippingDetails.Address,
+                City = shippingDetails.City,
+                PostalCode = shippingDetails.PostalCode,
+                Country = shippingDetails.Country,
+                PhoneNumber = shippingDetails.PhoneNumber
+            };
         }
+
+
+        public async Task<IEnumerable<ShippingDetailsDto>> GetAllShippingDetailsAsync()
+        {
+            var shippingDetails = await _shippingDetailsRepository.GetAllAsync();
+
+            // Map entities to DTOs
+            return shippingDetails.Select(s => new ShippingDetailsDto
+            {
+                ShippingDetailsId = s.ShippingDetailsId,
+                UserId = s.UserId,
+                UserName = s.User?.Name, // safe navigation
+                Address = s.Address,
+                City = s.City,
+                PostalCode = s.PostalCode,
+                Country = s.Country,
+                PhoneNumber = s.PhoneNumber
+            });
+        }
+
 
         public async Task<ShippingDetailsDTO> AddShippingDetailsAsync(int userId, ShippingDetailsCreateDTO shippingDetailsDTO)
         {
@@ -63,9 +105,9 @@ namespace E_commerce.Services
             };
         }
 
-        public async Task<bool> UpdateShippingDetailsAsync(ShippingDetailsUpdateDTO shippingDetailsDTO)
+        public async Task<bool> UpdateShippingDetailsAsync(int id, ShippingDetailsUpdateDTO shippingDetailsDTO)
         {
-            var existingDetails = await _shippingDetailsRepository.GetByUserIdAsync(shippingDetailsDTO.ShippingDetailsId);
+            var existingDetails = await _shippingDetailsRepository.GetByShippingDetailsIdAsync(id);
             if (existingDetails == null) return false;
 
             existingDetails.Address = shippingDetailsDTO.Address;
@@ -77,7 +119,7 @@ namespace E_commerce.Services
             await _shippingDetailsRepository.UpdateShippingDetailsAsync(existingDetails);
             return true;
         }
-    
+
 
 
         public async Task<bool> DeleteShippingDetailsAsync(int id)
@@ -89,4 +131,8 @@ namespace E_commerce.Services
                 return true;
             }
         }
+
+
+        
+
 }

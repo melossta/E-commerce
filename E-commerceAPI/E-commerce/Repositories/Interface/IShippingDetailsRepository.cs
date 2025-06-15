@@ -7,12 +7,15 @@ namespace E_commerce.Repositories
 {
     public interface IShippingDetailsRepository
     {
-        //Task<ShippingDetails?> GetByIdAsync(int id);
         Task<ShippingDetails> GetByUserIdAsync(int userId);
+        Task<ShippingDetails> GetByShippingDetailsIdAsync(int id);
         Task<IEnumerable<ShippingDetails>> GetAllAsync();
-        Task AddShippingDetailsAsync(ShippingDetails shippingDetails); // FIXED: Matches service
+        Task AddShippingDetailsAsync(ShippingDetails shippingDetails); // FIXED: Matches 
         Task UpdateShippingDetailsAsync(ShippingDetails shippingDetails); // FIXED: Matches service
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
+
+
+
     }
 }

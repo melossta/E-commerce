@@ -4,6 +4,7 @@ using E_commerce.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace E_commerce.Controllers
 {
@@ -18,8 +19,9 @@ namespace E_commerce.Controllers
             _shippingDetailsService = shippingDetailsService;
         }
 
-        [HttpGet("{userId}")]
-        public async Task<ActionResult<ShippingDetails>> GetShippingDetailsByUserId(int userId)
+        
+        [HttpGet("by-user/{userId}")]
+        public async Task<ActionResult<IEnumerable<ShippingDetailsDto>>> GetShippingDetailsByUserId(int userId)
         {
             try
             {
@@ -28,20 +30,26 @@ namespace E_commerce.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);  // Return 404 if the user is not found
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetShippingDetails(int id)
-        //{
-        //    var shippingDetails = await _shippingDetailsService.GetShippingDetailsByIdAsync(id);
-        //    if (shippingDetails == null) return NotFound("Shipping details not found.");
-        //    return Ok(shippingDetails);
-        //}
+
+        [HttpGet("by-id/{id}")]
+        public async Task<ActionResult<ShippingDetailsDto>> GetShippingDetailsById(int id)
+        {
+            var shippingDetails = await _shippingDetailsService.GetByShippingDetailsIdAsync(id);
+
+            if (shippingDetails == null)
+                return NotFound();
+
+            return Ok(shippingDetails);
+        }
+
+        
 
         [HttpGet]
         public async Task<IActionResult> GetAllShippingDetails()
@@ -60,17 +68,24 @@ namespace E_commerce.Controllers
             int userId = int.Parse(userIdClaim);
 
             var newShippingDetails = await _shippingDetailsService.AddShippingDetailsAsync(userId, shippingDetailsDTO);
-            return CreatedAtAction(nameof(GetShippingDetailsByUserId), new { id = newShippingDetails.ShippingDetailsId }, newShippingDetails);
+            //return CreatedAtAction(nameof(GetShippingDetailsByUserId), new { id = newShippingDetails.ShippingDetailsId }, newShippingDetails);
+            return Ok("Shipping created updated successfully."); // Assuming you want to return NoContent after successful creation
+
         }
 
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateShippingDetails(int id, [FromBody] ShippingDetailsUpdateDTO shippingDetailsDTO)
         {
-            if (id != shippingDetailsDTO.ShippingDetailsId) return BadRequest("ID mismatch.");
-            var updated = await _shippingDetailsService.UpdateShippingDetailsAsync(shippingDetailsDTO);
+            var updated = await _shippingDetailsService.UpdateShippingDetailsAsync(id, shippingDetailsDTO);
             if (!updated) return NotFound("Shipping details not found.");
-            return NoContent();
+
+            return Ok("Shipping details updated successfully.");
         }
+
+
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShippingDetails(int id)
         {

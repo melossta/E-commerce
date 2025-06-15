@@ -15,21 +15,28 @@ namespace E_commerce.Repositories
             _context = context;
         }
 
-        //public async Task<ShippingDetails?> GetByIdAsync(int id)
-        //{
-        //    return await _context.ShippingDetails.FindAsync(id);
-        //}
+
         public async Task<ShippingDetails> GetByUserIdAsync(int userId)
         {
             return await _context.ShippingDetails
-                                 .FirstOrDefaultAsync(s => s.UserId == userId);
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.UserId == userId);
         }
+
+
+        public async Task<ShippingDetails> GetByShippingDetailsIdAsync(int id)
+        {
+            return await _context.ShippingDetails
+                                 .Include(s => s.User)  // Include user if needed
+                                 .FirstOrDefaultAsync(s => s.ShippingDetailsId == id);
+        }   
 
         public async Task<IEnumerable<ShippingDetails>> GetAllAsync()
         {
-            return await _context.ShippingDetails.ToListAsync();
+            return await _context.ShippingDetails
+                .Include(s => s.User)
+                .ToListAsync();
         }
-
         public async Task AddShippingDetailsAsync(ShippingDetails shippingDetails) // FIXED
         {
             await _context.ShippingDetails.AddAsync(shippingDetails);
@@ -56,5 +63,7 @@ namespace E_commerce.Repositories
         {
             return await _context.ShippingDetails.AnyAsync(s => s.ShippingDetailsId == id);
         }
+
+
     }
 }
