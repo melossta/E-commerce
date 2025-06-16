@@ -49,13 +49,34 @@ namespace E_commerce.Controllers
 
 
 
+        //[HttpPost("place-single")]
+        //[Authorize]
+        //public async Task<IActionResult> PlaceSingleProductOrder(int userId, int productId, int quantity, int shippingDetailsId)
+        //{
+        //    var userExists = await _userRepository.UserExistsAsync(userId);
+        //    if (!userExists)
+        //        return NotFound("User not found");
+
+        //    try
+        //    {
+        //        var order = await _orderService.PlaceSingleProductOrderAsync(userId, productId, quantity, shippingDetailsId);
+        //        return Ok(order);
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, "An error occurred while placing the order.");
+        //    }
+        //}
+
         [HttpPost("place-single")]
         [Authorize]
-        public async Task<IActionResult> PlaceSingleProductOrder(int userId, int productId, int quantity, int shippingDetailsId)
+        public async Task<IActionResult> PlaceSingleProductOrder( int productId, int quantity, int shippingDetailsId)
         {
-            var userExists = await _userRepository.UserExistsAsync(userId);
-            if (!userExists)
-                return NotFound("User not found");
+            var userId = int.Parse(User.FindFirstValue("UserId"));
 
             try
             {
