@@ -31,98 +31,16 @@ namespace E_commerce.Services.Implementation
             _mapper = mapper;
         }
 
-        //public async Task<Order> PlaceOrderAsync(int userId)
-        //{
-        //    var cart = await _cartRepository.GetCartByUserIdAsync(userId);
-        //    if (cart == null || !cart.CartItems.Any())
-        //        throw new InvalidOperationException("Shopping cart is empty.");
-
-        //    // Create Order
-        //    var order = new Order
-        //    {
-        //        UserId = userId,
-        //        OrderDate = DateTime.UtcNow,
-        //        Status = "Pending",
-        //        TotalAmount = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price),
-        //        OrderItems = cart.CartItems.Select(ci => new OrderItem
-        //        {
-        //            ProductId = ci.ProductId,
-        //            Quantity = ci.Quantity,
-        //            UnitPrice = ci.Product.Price
-        //        }).ToList()
-        //    };
-
-        //    // Deduct stock
-        //    foreach (var cartItem in cart.CartItems)
-        //    {
-        //        var product = await _productRepository.GetProductByIdAsync(cartItem.ProductId);
-        //        if (product.StockQuantity < cartItem.Quantity)
-        //            throw new InvalidOperationException($"Not enough stock for product {product.Name}");
-
-        //        product.StockQuantity -= cartItem.Quantity;
-        //        await _productRepository.UpdateProductAsync(product);
-        //    }
-
-        //    // Save Order and clear cart
-        //    var createdOrder = await _orderRepository.CreateOrderAsync(order);
-        //    await _cartRepository.ClearCartAsync(cart.ShoppingCartId);
-
-        //    return createdOrder;
-        //}
-        //public async Task<Order> PlaceOrderAsync(int userId)
-        //{
-        //    var cart = await _cartRepository.GetCartByUserIdAsync(userId);
-        //    if (cart == null || !cart.CartItems.Any())
-        //        throw new InvalidOperationException("Shopping cart is empty.");
-
-        //    // 🔹 Fetch user's shipping details
-        //    var shippingDetails = await _shippingDetailsRepository.GetByUserIdAsync(userId);
-        //    if (shippingDetails == null)
-        //        throw new InvalidOperationException("No shipping details found for the user.");
-
-        //    // Create Order
-        //    var order = new Order
-        //    {
-        //        UserId = userId,
-        //        ShippingDetailsId = shippingDetails.ShippingDetailsId, // 🔹 Ensure valid foreign key
-        //        OrderDate = DateTime.UtcNow,
-        //        Status = "Pending",
-        //        TotalAmount = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price),
-        //        OrderItems = cart.CartItems.Select(ci => new OrderItem
-        //        {
-        //            ProductId = ci.ProductId,
-        //            Quantity = ci.Quantity,
-        //            UnitPrice = ci.Product.Price
-        //        }).ToList()
-        //    };
-
-        //    // Deduct stock
-        //    foreach (var cartItem in cart.CartItems)
-        //    {
-        //        var product = await _productRepository.GetProductByIdAsync(cartItem.ProductId);
-        //        if (product.StockQuantity < cartItem.Quantity)
-        //            throw new InvalidOperationException($"Not enough stock for product {product.Name}");
-
-        //        product.StockQuantity -= cartItem.Quantity;
-        //        await _productRepository.UpdateProductAsync(product);
-        //    }
-
-        //    // Save Order and clear cart
-        //    var createdOrder = await _orderRepository.CreateOrderAsync(order);
-        //    await _cartRepository.ClearCartAsync(cart.ShoppingCartId);
-
-        //    return createdOrder;
-        //}
-        public async Task<OrderDto> PlaceOrderAsync(int userId)
+        public async Task<OrderDto> PlaceOrderAsync(int userId, int shippingDetailsId)
         {
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);
             if (cart == null || !cart.CartItems.Any())
                 throw new InvalidOperationException("Shopping cart is empty.");
 
-            // 🔹 Fetch user's shipping details
-            var shippingDetails = await _shippingDetailsRepository.GetByUserIdAsync(userId);
-            if (shippingDetails == null)
-                throw new InvalidOperationException("No shipping details found for the user.");
+            // 🔹 Fetch the shipping details by shippingDetailsId
+            var shippingDetails = await _shippingDetailsRepository.GetByShippingDetailsIdAsync(shippingDetailsId);
+            if (shippingDetails == null || shippingDetails.UserId != userId)
+                throw new InvalidOperationException("Invalid or unauthorized shipping details selected.");
 
             // Create Order
             var order = new Order
@@ -154,7 +72,6 @@ namespace E_commerce.Services.Implementation
             // Save Order and clear cart
             var createdOrder = await _orderRepository.CreateOrderAsync(order);
             await _cartRepository.ClearCartAsync(cart.ShoppingCartId);
-
             // Convert to DTO before returning
             return new OrderDto
             {
@@ -171,7 +88,8 @@ namespace E_commerce.Services.Implementation
             };
         }
 
-        public async Task<OrderDto> PlaceSingleProductOrderAsync(int userId, int productId, int quantity)
+
+        public async Task<OrderDto> PlaceSingleProductOrderAsync(int userId, int productId, int quantity, int shippingDetailsId)
         {
             if (quantity <= 0)
                 throw new ArgumentException("Quantity must be greater than zero.");
@@ -183,9 +101,9 @@ namespace E_commerce.Services.Implementation
             if (product.StockQuantity < quantity)
                 throw new ArgumentException("Insufficient stock for product.");
 
-            var shippingDetails = await _shippingDetailsRepository.GetByUserIdAsync(userId);
-            if (shippingDetails == null)
-                throw new ArgumentException("User has no shipping details saved.");
+            var shippingDetails = await _shippingDetailsRepository.GetByShippingDetailsIdAsync(shippingDetailsId);
+            if (shippingDetails == null || shippingDetails.UserId != userId)
+                throw new InvalidOperationException("Invalid or unauthorized shipping details selected.");
 
             var order = new Order
             {
@@ -220,15 +138,6 @@ namespace E_commerce.Services.Implementation
 
 
 
-        //public async Task<Order?> GetOrderByIdAsync(int orderId)
-        //{
-        //    return await _orderRepository.GetOrderByIdAsync(orderId);
-        //}
-
-        //public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId)
-        //{
-        //    return await _orderRepository.GetOrdersByUserIdAsync(userId);
-        //}
         public async Task<OrderDto?> GetOrderByIdAsync(int orderId)
         {
             var order = await _orderRepository.GetOrderByIdAsync(orderId);

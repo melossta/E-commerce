@@ -8,14 +8,15 @@ namespace E_commerce.Services.Interface
 {
     public interface IOrderService
     {
-        Task<OrderDto> PlaceSingleProductOrderAsync(int userId, int productId, int quantity);
+        
+        Task<OrderDto> PlaceSingleProductOrderAsync(int userId, int productId, int quantity, int shippingDetailsId);
 
-        Task<OrderDto> PlaceOrderAsync(int userId);
-        //Task<Order?> GetOrderByIdAsync(int orderId);
+        Task<OrderDto> PlaceOrderAsync(int userId, int shippingDetailsId);
         Task<OrderDto?> GetOrderByIdAsync(int orderId);
         Task<IEnumerable<OrderDto>> GetOrdersByUserIdAsync(int userId);
-        //Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId);
         Task<IEnumerable<Order>> GetAllOrdersAsync();
         Task UpdateOrderStatusAsync(int orderId, OrderStatus status);
+
+
     }
 }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using E_commerce.Models.Enums;
 using E_commerce.Repositories.Interface;
+using E_commerce.Models.DTOs;
 namespace E_commerce.Controllers
 {
     [Route("api/orders")]
@@ -27,14 +28,15 @@ namespace E_commerce.Controllers
             _userRepository = userRepository;
         }
 
-        [HttpPost("place")]
+
+        [HttpPost("place-order")]
         [Authorize]
-        public async Task<IActionResult> PlaceOrder()
+        public async Task<IActionResult> PlaceOrder([FromQuery] int shippingDetailsId)
         {
             try
             {
                 var userId = int.Parse(User.FindFirstValue("UserId"));
-                var order = await _orderService.PlaceOrderAsync(userId);
+                var order = await _orderService.PlaceOrderAsync(userId, shippingDetailsId);
                 return CreatedAtAction(nameof(GetOrderById), new { orderId = order.OrderId }, order);
             }
             catch (Exception ex)
@@ -44,9 +46,12 @@ namespace E_commerce.Controllers
             }
         }
 
+
+
+
         [HttpPost("place-single")]
         [Authorize]
-        public async Task<IActionResult> PlaceSingleProductOrder(int userId, int productId, int quantity)
+        public async Task<IActionResult> PlaceSingleProductOrder(int userId, int productId, int quantity, int shippingDetailsId)
         {
             var userExists = await _userRepository.UserExistsAsync(userId);
             if (!userExists)
@@ -54,7 +59,7 @@ namespace E_commerce.Controllers
 
             try
             {
-                var order = await _orderService.PlaceSingleProductOrderAsync(userId, productId, quantity);
+                var order = await _orderService.PlaceSingleProductOrderAsync(userId, productId, quantity, shippingDetailsId);
                 return Ok(order);
             }
             catch (ArgumentException ex)
@@ -66,6 +71,7 @@ namespace E_commerce.Controllers
                 return StatusCode(500, "An error occurred while placing the order.");
             }
         }
+
 
         [HttpGet("{orderId}")]
         [Authorize]
