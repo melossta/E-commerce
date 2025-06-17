@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { ProductsService } from '../../../services/products.service';
-import { CategoryService } from '../../../services/categories.service';
-import { AuthService } from '../../../services/auth-service';
+import { ProductsService } from '../../services/products.service';
+import { CategoryService } from '../../services/categories.service';
+import { AuthService } from '../../services/auth-service';
 import { OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';

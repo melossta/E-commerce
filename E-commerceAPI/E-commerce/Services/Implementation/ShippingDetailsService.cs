@@ -17,27 +17,49 @@ namespace E_commerce.Services
         }
 
 
-        public async Task<ShippingDetailsDto> GetShippingDetailsByUserIdAsync(int userId)
-        {
-            var shippingDetails = await _shippingDetailsRepository.GetByUserIdAsync(userId);
+        //public async Task<ShippingDetailsDto> GetShippingDetailsByUserIdAsync(int userId)
+        //{
+        //    var shippingDetails = await _shippingDetailsRepository.GetByUserIdAsync(userId);
 
-            if (shippingDetails == null)
+        //    if (shippingDetails == null)
+        //    {
+        //        throw new KeyNotFoundException($"Shipping details not found for UserId: {userId}");
+        //    }
+
+        //    return new ShippingDetailsDto
+        //    {
+        //        ShippingDetailsId = shippingDetails.ShippingDetailsId,
+        //        UserId = shippingDetails.UserId,
+        //        UserName = shippingDetails.User?.Name,
+        //        Address = shippingDetails.Address,
+        //        City = shippingDetails.City,
+        //        PostalCode = shippingDetails.PostalCode,
+        //        Country = shippingDetails.Country,
+        //        PhoneNumber = shippingDetails.PhoneNumber
+        //    };
+        //}
+        public async Task<IEnumerable<ShippingDetailsDto>> GetShippingDetailsByUserIdAsync(int userId)
+        {
+            var shippingDetailsList = await _shippingDetailsRepository.GetByUserIdAsync(userId);
+
+            if (shippingDetailsList == null || !shippingDetailsList.Any())
             {
-                throw new KeyNotFoundException($"Shipping details not found for UserId: {userId}");
+                throw new KeyNotFoundException($"No shipping details found for UserId: {userId}");
             }
 
-            return new ShippingDetailsDto
+            return shippingDetailsList.Select(s => new ShippingDetailsDto
             {
-                ShippingDetailsId = shippingDetails.ShippingDetailsId,
-                UserId = shippingDetails.UserId,
-                UserName = shippingDetails.User?.Name,
-                Address = shippingDetails.Address,
-                City = shippingDetails.City,
-                PostalCode = shippingDetails.PostalCode,
-                Country = shippingDetails.Country,
-                PhoneNumber = shippingDetails.PhoneNumber
-            };
+                ShippingDetailsId = s.ShippingDetailsId,
+                UserId = s.UserId,
+                UserName = s.User?.Name,
+                Address = s.Address,
+                City = s.City,
+                PostalCode = s.PostalCode,
+                Country = s.Country,
+                PhoneNumber = s.PhoneNumber
+            }).ToList();
         }
+
 
 
         public async Task<ShippingDetailsDto> GetByShippingDetailsIdAsync(int id)

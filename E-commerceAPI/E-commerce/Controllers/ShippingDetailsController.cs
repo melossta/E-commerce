@@ -19,7 +19,24 @@ namespace E_commerce.Controllers
             _shippingDetailsService = shippingDetailsService;
         }
 
-        
+
+        //[HttpGet("by-user/{userId}")]
+        //public async Task<ActionResult<IEnumerable<ShippingDetailsDto>>> GetShippingDetailsByUserId(int userId)
+        //{
+        //    try
+        //    {
+        //        var shippingDetails = await _shippingDetailsService.GetShippingDetailsByUserIdAsync(userId);
+        //        return Ok(shippingDetails);
+        //    }
+        //    catch (KeyNotFoundException ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
         [HttpGet("by-user/{userId}")]
         public async Task<ActionResult<IEnumerable<ShippingDetailsDto>>> GetShippingDetailsByUserId(int userId)
         {
@@ -37,8 +54,9 @@ namespace E_commerce.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        
 
-        [HttpGet("by-id/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<ShippingDetailsDto>> GetShippingDetailsById(int id)
         {
             var shippingDetails = await _shippingDetailsService.GetByShippingDetailsIdAsync(id);

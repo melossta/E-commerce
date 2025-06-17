@@ -16,12 +16,20 @@ namespace E_commerce.Repositories
         }
 
 
-        public async Task<ShippingDetails> GetByUserIdAsync(int userId)
+        //public async Task<ShippingDetails> GetByUserIdAsync(int userId)
+        //{
+        //    return await _context.ShippingDetails
+        //        .Include(s => s.User)
+        //        .FirstOrDefaultAsync(s => s.UserId == userId);
+        //}
+        public async Task<IEnumerable<ShippingDetails>> GetByUserIdAsync(int userId)
         {
             return await _context.ShippingDetails
                 .Include(s => s.User)
-                .FirstOrDefaultAsync(s => s.UserId == userId);
+                .Where(s => s.UserId == userId)
+                .ToListAsync();
         }
+
 
 
         public async Task<ShippingDetails> GetByShippingDetailsIdAsync(int id)

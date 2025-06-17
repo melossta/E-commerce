@@ -7,7 +7,9 @@ namespace E_commerce.Repositories
 {
     public interface IShippingDetailsRepository
     {
-        Task<ShippingDetails> GetByUserIdAsync(int userId);
+        Task<IEnumerable<ShippingDetails>> GetByUserIdAsync(int userId);
+        // qeta e kem bno koment
+        //Task<ShippingDetails> GetByUserIdAsync(int userId);
         Task<ShippingDetails> GetByShippingDetailsIdAsync(int id);
         Task<IEnumerable<ShippingDetails>> GetAllAsync();
         Task AddShippingDetailsAsync(ShippingDetails shippingDetails); // FIXED: Matches 
