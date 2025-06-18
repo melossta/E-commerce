@@ -5,6 +5,7 @@ using E_commerce.Services.Implementation;
 using E_commerce.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace E_commerce.Controllers
@@ -21,9 +22,35 @@ namespace E_commerce.Controllers
             _shoppingCartService = shoppingCartService;
             _userRepository = userRepository;
         }
+        [HttpGet]
+        public async Task<IActionResult> GetCart()
+        {
+            var userId = int.Parse(User.FindFirstValue("UserId"));
+            var cart = await _shoppingCartService.GetCartAsync(userId);
+            if (cart == null)
+            {
+                return NotFound("Cart not found");
+            }
+
+            var cartDto = new CartDto
+            {
+                UserId = cart.UserId,
+                CartItems = cart.CartItems.Select(ci => new CartItemDto
+                {
+                    CartItemId = ci.CartItemId,
+                    ProductId = ci.ProductId,
+                    ProductName = ci.Product?.Name,
+                    Quantity = ci.Quantity,
+                    TotalPrice = ci.TotalPrice // Map TotalPrice
+                                               // Map other Product properties if needed
+                }).ToList()
+            };
+
+            return Ok(cartDto);
+        }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetCart(int userId)
+        public async Task<IActionResult> GetCartByUserId(int userId)
         {
             var cart = await _shoppingCartService.GetCartAsync(userId);
             if (cart == null)
@@ -49,8 +76,9 @@ namespace E_commerce.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddToCart(int userId, int productId, int quantity)
-        {           
+        public async Task<IActionResult> AddToCart( int productId, int quantity)
+        {
+            var userId = int.Parse(User.FindFirstValue("UserId"));
             var userExists = await _userRepository.UserExistsAsync(userId);
             if(!userExists)
             {

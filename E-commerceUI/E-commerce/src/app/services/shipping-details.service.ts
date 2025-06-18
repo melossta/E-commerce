@@ -33,8 +33,8 @@ export class ShippingDetailsService {
   }
 
   // ✅ Get shipping detail by ID
-  getShippingDetailById(id: number): Observable<ShippingDetails> {
-    return this.http.get<ShippingDetails>(`${this.apiUrl}/${id}`);
+  getShippingDetailById(id: number): Observable<ShippingDetails[]> {
+    return this.http.get<ShippingDetails[]>(`${this.apiUrl}/${id}`);
   }
 
   // might need to change the omit

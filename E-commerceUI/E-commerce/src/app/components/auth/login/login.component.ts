@@ -34,15 +34,11 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe(
       (response) => {
         const token = response.token;
-        const role = response.roles[0]; // Assuming the first role is the primary one
-  
-        // Save token and role to localStorage
+        const role = response.roles[0]; 
         localStorage.setItem('authToken', token);
-        localStorage.setItem('role', role);
-  
-        // Show success message
-        // this.successMessage = `Successfully logged in as ${role}.`;
-        // this.errorMessage = ''; // Clear error if any
+        localStorage.setItem('role', role); // Save userId as a string    
+
+        this.authService.decodeToken();
         alert(`Successfully logged in as ${role}.`);
         this.router.navigate(['/categories']); // Redirect to home page or dashboard
       },

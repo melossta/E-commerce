@@ -1,44 +1,68 @@
 <div class="container">
   <h2>Shipping Details Management</h2>
 
-  <mat-card>
-    <mat-form-field>
-      <input matInput type="number" placeholder="Enter User ID" [(ngModel)]="userId">
-    </mat-form-field>
-    <button mat-raised-button color="primary" (click)="loadShippingDetailsByUserId()">Get User Shipping Details</button>
+  <!-- User Search Card -->
+  <mat-card class="add-shipping-card">
+    <form class="add-shipping-form">
+      <mat-form-field>
+        <input matInput type="number" placeholder="Enter User ID" [(ngModel)]="userId" name="userId">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" placeholder="Enter Shipping Details ID" [(ngModel)]="shippingDetailsId" name="shippingDetailsId">
+      </mat-form-field>
+      <div class="form-buttons">
+        <button mat-raised-button color="primary" class="btn" (click)="loadShippingDetailsByUserId()">Get User Shipping Details</button>
+      </div>
+      <div class="form-buttons">
+        <button mat-raised-button color="accent" class="btn" (click)="loadShippingDetailsByShippingId()">Get  Shipping by Id   Details</button>
+      </div>
+
+    </form>
   </mat-card>
 
-  <mat-card>
+  <!-- Add Shipping Detail Form -->
+  <mat-card class="add-shipping-card">
     <h3>Add New Shipping Detail</h3>
 
-    <mat-form-field>
-      <input matInput placeholder="Address" [(ngModel)]="address">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="City" [(ngModel)]="city">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Postal Code" [(ngModel)]="postalCode">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Country" [(ngModel)]="country">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Phone Number" [(ngModel)]="phoneNumber">
-    </mat-form-field>
+    <form class="add-shipping-form">
+      <mat-form-field>
+        <input matInput placeholder="Address" [(ngModel)]="address" name="address">
+      </mat-form-field>
 
-    <button mat-raised-button color="accent" (click)="addShippingDetail()">Add Shipping Detail</button>
+      <mat-form-field>
+        <input matInput placeholder="City" [(ngModel)]="city" name="city">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Postal Code" [(ngModel)]="postalCode" name="postalCode">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Country" [(ngModel)]="country" name="country">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Phone Number" [(ngModel)]="phoneNumber" name="phoneNumber">
+      </mat-form-field>
+
+      <div class="form-buttons">
+        <button mat-raised-button color="accent" class="btn btn-success" (click)="addShippingDetail()">Add Shipping Detail</button>
+      </div>
+    </form>
   </mat-card>
 
-  <mat-card>
-    <h3>Shipping Details List</h3>
-
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!-- Shipping Details List -->
+  <mat-card class="shipping-table-card">
+    <header style="display: flex; justify-content: space-between; align-items: center;">
+      <h3>Shipping Details List</h3>
+    <button style=" width: 100px;height: 35px;" mat-raised-button color="primary" class="btn" (click)="loadAllShippingDetails()">Refresh</button>
+    </header>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table">
 
       <ng-container matColumnDef="address">
         <th mat-header-cell *matHeaderCellDef>Address</th>
         <td mat-cell *matCellDef="let detail">{{ detail.address }}</td>
-      </ng-container>
+      </ng-container> 
 
       <ng-container matColumnDef="city">
         <th mat-header-cell *matHeaderCellDef>City</th>
@@ -63,8 +87,8 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let detail">
-          <button mat-button (click)="openEditModal(detail)">Edit</button>
-          <button mat-button color="warn" (click)="deleteShippingDetail(detail.shippingDetailsId)">Delete</button>
+          <button mat-button class="btn btn-success" (click)="openEditModal(detail)">Edit</button>
+          <button mat-button class="btn btn-outline-danger" (click)="deleteShippingDetail(detail.shippingDetailsId)">Delete</button>
         </td>
       </ng-container>
 
@@ -76,28 +100,41 @@
   </mat-card>
 
   <!-- Edit Modal -->
-  <div *ngIf="isEditModalOpen" class="edit-modal">
-    <h3>Edit Shipping Detail</h3>
+  <div *ngIf="isEditModalOpen" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Edit Shipping Details</h3>
 
-    <mat-form-field>
-      <input matInput placeholder="Address" [(ngModel)]="address">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="City" [(ngModel)]="city">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Postal Code" [(ngModel)]="postalCode">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Country" [(ngModel)]="country">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Phone Number" [(ngModel)]="phoneNumber">
-    </mat-form-field>
+      <form>
+        <mat-form-field class="modal-form-field">
+          <input matInput placeholder="Address" [(ngModel)]="address" name="editAddress">
+        </mat-form-field>
 
-    <button mat-raised-button color="primary" (click)="updateShippingDetail()">Update</button>
-    <button mat-raised-button color="warn" (click)="closeEditModal()">Cancel</button>
+        <mat-form-field class="modal-form-field">
+          <input matInput placeholder="City" [(ngModel)]="city" name="editCity">
+        </mat-form-field>
+
+        <mat-form-field class="modal-form-field">
+          <input matInput placeholder="Postal Code" [(ngModel)]="postalCode" name="editPostalCode">
+        </mat-form-field>
+
+        <mat-form-field class="modal-form-field">
+          <input matInput placeholder="Country" [(ngModel)]="country" name="editCountry">
+        </mat-form-field>
+
+        <mat-form-field class="modal-form-field">
+          <input matInput placeholder="Phone Number" [(ngModel)]="phoneNumber" name="editPhoneNumber">
+        </mat-form-field>
+
+        <div class="modal-buttons">
+          <button mat-raised-button color="primary" class="btn btn-success" (click)="updateShippingDetail()">Update</button>
+          <button mat-raised-button color="warn" class="btn btn-outline-danger" (click)="closeEditModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <button mat-raised-button color="warn" (click)="logout()">Logout</button>
+  <!-- Logout Button -->
+  <div class="logout-container">
+    <button mat-raised-button color="warn" class="btn btn-outline-danger" (click)="logout()">Logout</button>
+  </div>
 </div>

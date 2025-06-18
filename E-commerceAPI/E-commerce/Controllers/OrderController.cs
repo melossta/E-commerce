@@ -47,8 +47,6 @@ namespace E_commerce.Controllers
         }
 
 
-
-
         //[HttpPost("place-single")]
         //[Authorize]
         //public async Task<IActionResult> PlaceSingleProductOrder(int userId, int productId, int quantity, int shippingDetailsId)

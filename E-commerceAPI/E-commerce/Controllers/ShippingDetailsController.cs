@@ -87,18 +87,20 @@ namespace E_commerce.Controllers
 
             var newShippingDetails = await _shippingDetailsService.AddShippingDetailsAsync(userId, shippingDetailsDTO);
             //return CreatedAtAction(nameof(GetShippingDetailsByUserId), new { id = newShippingDetails.ShippingDetailsId }, newShippingDetails);
-            return Ok("Shipping created updated successfully."); // Assuming you want to return NoContent after successful creation
+            return Ok(new { message = "Shipping created successfully." });
+
 
         }
 
-        
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateShippingDetails(int id, [FromBody] ShippingDetailsUpdateDTO shippingDetailsDTO)
         {
             var updated = await _shippingDetailsService.UpdateShippingDetailsAsync(id, shippingDetailsDTO);
             if (!updated) return NotFound("Shipping details not found.");
 
-            return Ok("Shipping details updated successfully.");
+            return Ok(new { message = "Shipping updated successfully." });
+
         }
 
 

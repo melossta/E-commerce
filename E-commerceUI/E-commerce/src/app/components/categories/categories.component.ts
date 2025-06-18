@@ -105,5 +105,7 @@ export class CategoryComponent implements OnInit {
   goToProducts() {
     window.location.href = '/products'; // Redirect to products page
   }
-  
+  goToShippingDetails() {
+    window.location.href = '/shipping-details'; // Redirect to shipping details page
+  }
 }

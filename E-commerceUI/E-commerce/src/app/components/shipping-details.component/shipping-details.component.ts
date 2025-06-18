@@ -69,6 +69,23 @@ export class ShippingDetailsComponent implements OnInit, AfterViewInit {
     });
   }
 
+    loadShippingDetailsByShippingId() {
+    if (this.shippingDetailsId === null) {
+      alert('Please enter a Shipping ID.');
+      return;
+    }
+
+    this.shippingDetailsService.getShippingDetailById(this.shippingDetailsId).subscribe({
+      next: (data) => {
+        this.dataSource.data = [data];
+      },
+      error: (err) => {
+        alert('Error loading shipping details for the Shipping ID.');
+        console.error(err);
+      }
+    });
+  }
+
   addShippingDetail() {
     const newShippingDetail = {
       userId: this.userId!,
@@ -165,4 +182,5 @@ export class ShippingDetailsComponent implements OnInit, AfterViewInit {
   logout() {
     this.authService.logout();
   }
+  
 }

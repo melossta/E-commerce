@@ -23,6 +23,24 @@ export class AuthService {
   saveToken(token: string): void {
     localStorage.setItem('authToken', token);
   }
+decodeToken(): any | null {
+  const token = this.getToken();
+  if (!token) return null;
+
+  try {
+    const payloadBase64 = token.split('.')[1];
+    const payload = JSON.parse(atob(payloadBase64));
+
+    if (payload.UserId) {
+      localStorage.setItem('userId', payload.UserId);
+    }
+
+    return payload;
+  } catch (error) {
+    console.error('Error decoding token', error);
+    return null;
+  }
+}
 
   getToken(): string | null {
     return localStorage.getItem('authToken');
