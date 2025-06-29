@@ -1,0 +1,32 @@
+<div class="category-management">
+    <h2>Category Management</h2>
+  
+    <form (ngSubmit)="editingCategoryId ? updateCategory() : addCategory()">
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="name" name="name" required>
+  
+      <label>Description:</label>
+      <input type="text" [(ngModel)]="description" name="description" required>
+  
+      <button type="submit">{{ editingCategoryId ? 'Update Category' : 'Add Category' }}</button>
+      <button type="button" (click)="resetForm()" *ngIf="editingCategoryId">Cancel Edit</button>
+    </form>
+  
+    <hr>
+  
+    <h3>Existing Categories</h3>
+    <ul *ngIf="categories.length > 0; else noCategories">
+      <li *ngFor="let category of categories">
+        <strong>{{ category.name }}</strong>: {{ category.description }}
+        <button (click)="startEdit(category)">Edit</button>
+        <button (click)="deleteCategory(category.categoryId)">Delete</button>
+      </li>
+    </ul>
+    <button (click)="logout()">Logout</button>
+    <button (click)="goToProducts()">Go to Products</button>
+    <button (click)="goToShippingDetails()">Go to Shipping Details</button>
+    <ng-template #noCategories>
+      <p>No categories found.</p>
+    </ng-template>
+  </div>
+  
