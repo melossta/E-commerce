@@ -49,9 +49,45 @@ namespace E_commerce.Controllers
             return Ok(cartDto);
         }
 
+        //[HttpGet("{userId}")]
+        //public async Task<IActionResult> GetCartByUserId(int userId)
+        //{
+        //    var cart = await _shoppingCartService.GetCartAsync(userId);
+        //    var userExists = await _userRepository.UserExistsAsync(userId);
+        //    if (cart == null)
+        //    {
+        //        return NotFound("Cart not found");
+        //    }
+        //    else if (!userExists)
+        //    {
+        //       return NotFound("User not found");
+        //    }
+
+        //    var cartDto = new CartDto
+        //    {
+        //        UserId = cart.UserId,
+        //        CartItems = cart.CartItems.Select(ci => new CartItemDto
+        //        {
+        //            CartItemId = ci.CartItemId,
+        //            ProductId = ci.ProductId,
+        //            ProductName = ci.Product?.Name,
+        //            Quantity = ci.Quantity,
+        //            TotalPrice = ci.TotalPrice // Map TotalPrice
+        //                                       // Map other Product properties if needed
+        //        }).ToList()
+        //    };
+
+        //    return Ok(cartDto);
+        //}
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetCartByUserId(int userId)
         {
+            var userExists = await _userRepository.UserExistsAsync(userId);
+            if (!userExists)
+            {
+                return NotFound("User not found");
+            }
+
             var cart = await _shoppingCartService.GetCartAsync(userId);
             if (cart == null)
             {
@@ -67,34 +103,52 @@ namespace E_commerce.Controllers
                     ProductId = ci.ProductId,
                     ProductName = ci.Product?.Name,
                     Quantity = ci.Quantity,
-                    TotalPrice = ci.TotalPrice // Map TotalPrice
-                                               // Map other Product properties if needed
+                    TotalPrice = ci.TotalPrice
                 }).ToList()
             };
 
-            return Ok(cartDto);
+            return Ok(cartDto); // Even if CartItems is empty, return 200
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> AddToCart( int productId, int quantity)
+        public async Task<IActionResult> AddToCart([FromBody] AddToCartDTO request)
         {
-            var userId = int.Parse(User.FindFirstValue("UserId"));
-            var userExists = await _userRepository.UserExistsAsync(userId);
-            if(!userExists)
-            {
-                return NotFound("User not found");
-            }    
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (userIdClaim == null) return Unauthorized("User ID missing from token.");
+            int userId = int.Parse(userIdClaim);
 
             try
             {
-                await _shoppingCartService.AddToCartAsync(userId, productId, quantity);
-                return Ok("Item added to cart");
+                await _shoppingCartService.AddToCartAsync(userId, request.ProductId, request.Quantity);
+                return Ok(new { message = "Item added to cart" });
             }
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+        //[HttpPost("add")]
+        //public async Task<IActionResult> AddToCart( int productId, int quantity)
+        //{
+        //    var userId = int.Parse(User.FindFirstValue("UserId"));
+        //    var userExists = await _userRepository.UserExistsAsync(userId);
+        //    if(!userExists)
+        //    {
+        //        return NotFound("User not found");
+        //    }    
+
+        //    try
+        //    {
+        //        await _shoppingCartService.AddToCartAsync(userId, productId, quantity);
+        //        return Ok(new {message="Item Added to the Cart"});
+
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
         //[HttpPost("add")]
         //public async Task<IActionResult> AddToCart(int userId, int productId, int quantity)
         //{
@@ -123,7 +177,7 @@ namespace E_commerce.Controllers
             try
             {
                 await _shoppingCartService.UpdateCartItemAsync(cartItemId, quantity);
-                return Ok("Cart item updated");
+                return Ok(new { message = "Shopping cart updated successfully." });
             }
             catch (ArgumentException ex)
             {
@@ -135,14 +189,14 @@ namespace E_commerce.Controllers
         public async Task<IActionResult> RemoveCartItem(int cartItemId)
         {
             await _shoppingCartService.RemoveCartItemAsync(cartItemId);
-            return Ok("Cart item removed");
+            return Ok(new { message = "Cart item removed." });
         }
 
         [HttpDelete("clear/{userId}")]
         public async Task<IActionResult> ClearCart(int userId)
         {
             await _shoppingCartService.ClearCartAsync(userId);
-            return Ok("Cart cleared");
+            return Ok(new { message = "Cart Cleared" });
         }
     }
 }
