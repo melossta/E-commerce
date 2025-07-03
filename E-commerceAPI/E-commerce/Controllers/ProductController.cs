@@ -16,22 +16,39 @@ namespace E_commerce.Controllers
             _productService = productService;
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllProducts()
+        //{
+        //    var products = await _productService.GetAllProductsAsync();
+        //    return Ok(products);
+        //}
+
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetProductById(int id)
+        //{
+        //    var product = await _productService.GetProductByIdAsync(id);
+        //    if (product == null)
+        //        return NotFound();
+
+        //    return Ok(product);
+        //}
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var products = await _productService.GetAllProductsAsync();
-            return Ok(products);
+            var productDTOs = await _productService.GetAllProductsAsync();
+            return Ok(productDTOs);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
-            var product = await _productService.GetProductByIdAsync(id);
-            if (product == null)
+            var productDTO = await _productService.GetProductByIdAsync(id);
+            if (productDTO == null)
                 return NotFound();
 
-            return Ok(product);
+            return Ok(productDTO);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductDTO product)
@@ -54,35 +71,80 @@ namespace E_commerce.Controllers
         }
 
 
+
+
         //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
+        //public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product productUpdate)
         //{
-        //    if (id != product.ProductId)
-        //        return BadRequest("Product ID mismatch");
+        //    var product = await _productService.GetProductByIdAsync(id);
+
+        //    if (product == null)
+        //    {
+        //        return NotFound("Product not found");
+        //    }
+        //    product.Name = productUpdate.Name;
+        //    product.Description = productUpdate.Description;
+        //    product.Price = productUpdate.Price;
+        //    product.StockQuantity = productUpdate.StockQuantity;
+        //    product.CategoryId = productUpdate.CategoryId;
+
+
+
+        //     await _productService.UpdateProductAsync(product);
+        //    return NoContent();
+        //}
+
+
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductDto dto)
+        //{
+        //    var product = await _productService.GetProductByIdAsync(id);
+        //    if (product == null) return NotFound();
+
+        //    product.Product=dto.ProductId; 
+        //    product.Name = dto.Name;
+        //    product.Description = dto.Description;
+        //    product.Price = dto.Price;
+        //    product.StockQuantity = dto.StockQuantity;
+        //    product.CategoryId = dto.CategoryId;
+
+        //    // Update images similarly if needed
+        //    // ...
 
         //    await _productService.UpdateProductAsync(product);
         //    return NoContent();
         //}
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDTO productUpdate)
+        [HttpPut("{productId}")]
+        public async Task<IActionResult> UpdateProduct(int productId, [FromBody] UpdateProductDto updateDto)
         {
-           var product = await _productService.GetProductByIdAsync(id);
+            var existingProductDTO = await _productService.GetProductByIdAsync(productId);
+            if (existingProductDTO == null) return NotFound();
 
-            if (product == null)
+            // Create a real Product domain model to pass to UpdateProductAsync
+            var updatedProduct = new Product
             {
-                return NotFound("Product not found");
-            }
-            product.Name = productUpdate.Name;
-            product.Description = productUpdate.Description;
-            product.Price = productUpdate.Price;
-            product.StockQuantity = productUpdate.StockQuantity;
-            product.CategoryId = productUpdate.CategoryId;
+                ProductId = productId,
+                Name = updateDto.Name,
+                Description = updateDto.Description,
+                Price = updateDto.Price,
+                StockQuantity = updateDto.StockQuantity,
+                CategoryId = updateDto.CategoryId,
+                ProductImages = updateDto.ProductImages.Select(img => new ProductImage
+                {
+                    //ProductImageId = img.ProductImageId,
+                    ImageUrl = img.ImageUrl,
+                    SortOrder = img.SortOrder,
+                    IsPrimary = img.IsPrimary
+                }).ToList()
+            };
 
-
-            await _productService.UpdateProductAsync(product);
+            await _productService.UpdateProductAsync(productId, updateDto);
             return NoContent();
         }
+
+
+
+
 
 
         [HttpDelete("{id}")]

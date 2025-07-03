@@ -20,6 +20,7 @@ namespace E_commerce.Models.Domains
 
         public int CategoryId { get; set; }  // Foreign Key
         public Category Category { get; set; }
+        public ICollection<ProductImage> ProductImages { get; set; }
     }
 
 }

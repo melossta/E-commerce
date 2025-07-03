@@ -19,6 +19,7 @@ namespace E_commerce.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<ProductImage> ProductImage { get; set; }
 
         // Junction Tables
         public DbSet<CartItem> CartItems { get; set; }

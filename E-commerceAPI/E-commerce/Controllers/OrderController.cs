@@ -29,14 +29,30 @@ namespace E_commerce.Controllers
         }
 
 
+        //[HttpPost("place-order")]
+        //[Authorize]
+        //public async Task<IActionResult> PlaceOrder([FromQuery] int shippingDetailsId)
+        //{
+        //    try
+        //    {
+        //        var userId = int.Parse(User.FindFirstValue("UserId"));
+        //        var order = await _orderService.PlaceOrderAsync(userId, shippingDetailsId);
+        //        return CreatedAtAction(nameof(GetOrderById), new { orderId = order.OrderId }, order);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error placing order");
+        //        return StatusCode(500, new { message = ex.Message, details = ex.InnerException?.Message });
+        //    }
+        //}
         [HttpPost("place-order")]
         [Authorize]
-        public async Task<IActionResult> PlaceOrder([FromQuery] int shippingDetailsId)
+        public async Task<IActionResult> PlaceOrder([FromBody] PlaceOrderRequestDto request)
         {
             try
             {
                 var userId = int.Parse(User.FindFirstValue("UserId"));
-                var order = await _orderService.PlaceOrderAsync(userId, shippingDetailsId);
+                var order = await _orderService.PlaceOrderAsync(userId, request.ShippingDetailsId);
                 return CreatedAtAction(nameof(GetOrderById), new { orderId = order.OrderId }, order);
             }
             catch (Exception ex)
@@ -47,13 +63,14 @@ namespace E_commerce.Controllers
         }
 
 
+
+
+
         //[HttpPost("place-single")]
         //[Authorize]
-        //public async Task<IActionResult> PlaceSingleProductOrder(int userId, int productId, int quantity, int shippingDetailsId)
+        //public async Task<IActionResult> PlaceSingleProductOrder( int productId, int quantity, int shippingDetailsId)
         //{
-        //    var userExists = await _userRepository.UserExistsAsync(userId);
-        //    if (!userExists)
-        //        return NotFound("User not found");
+        //    var userId = int.Parse(User.FindFirstValue("UserId"));
 
         //    try
         //    {
@@ -69,16 +86,21 @@ namespace E_commerce.Controllers
         //        return StatusCode(500, "An error occurred while placing the order.");
         //    }
         //}
-
         [HttpPost("place-single")]
         [Authorize]
-        public async Task<IActionResult> PlaceSingleProductOrder( int productId, int quantity, int shippingDetailsId)
+        public async Task<IActionResult> PlaceSingleProductOrder([FromBody] PlaceOrderDto dto)
         {
             var userId = int.Parse(User.FindFirstValue("UserId"));
 
             try
             {
-                var order = await _orderService.PlaceSingleProductOrderAsync(userId, productId, quantity, shippingDetailsId);
+                var order = await _orderService.PlaceSingleProductOrderAsync(
+                    userId,
+                    dto.ProductId,
+                    dto.Quantity,
+                    dto.ShippingDetailsId
+                );
+
                 return Ok(order);
             }
             catch (ArgumentException ex)
