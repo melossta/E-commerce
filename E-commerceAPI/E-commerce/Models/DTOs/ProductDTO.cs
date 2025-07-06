@@ -52,6 +52,22 @@ namespace E_commerce.Models.DTOs
         public List<UpdateProductImageDTO> ProductImages { get; set; } = new List<UpdateProductImageDTO>();
     }
 
+    public class AddProductDto
+    {
+        [Required, MaxLength(200)]
+        public string Name { get; set; }
+
+        public string? Description { get; set; }
+
+        [Required]
+        public decimal Price { get; set; }
+
+        public int StockQuantity { get; set; }
+
+        public int CategoryId { get; set; }
+
+        public List<UpdateProductImageDTO> ProductImages { get; set; } = new List<UpdateProductImageDTO>();
+    }
 
 
 }

@@ -16,22 +16,6 @@ namespace E_commerce.Controllers
             _productService = productService;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllProducts()
-        //{
-        //    var products = await _productService.GetAllProductsAsync();
-        //    return Ok(products);
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetProductById(int id)
-        //{
-        //    var product = await _productService.GetProductByIdAsync(id);
-        //    if (product == null)
-        //        return NotFound();
-
-        //    return Ok(product);
-        //}
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
@@ -49,9 +33,8 @@ namespace E_commerce.Controllers
             return Ok(productDTO);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> AddProduct([FromBody] ProductDTO product)
+        public async Task<IActionResult> AddProduct([FromBody] AddProductDto product)
         {
             if (string.IsNullOrWhiteSpace(product.Name))
                 return BadRequest("Product name is required");
@@ -60,60 +43,25 @@ namespace E_commerce.Controllers
             {
                 Name = product.Name,
                 Description = product.Description,
-                StockQuantity= product.StockQuantity,
+                StockQuantity = product.StockQuantity,
                 Price = product.Price,
-                CategoryId = product.CategoryId
+                CategoryId = product.CategoryId,
+                ProductImages = product.ProductImages.Select(img => new ProductImage
+                {
+                    //ProductImageId = img.ProductImageId,
+                    ImageUrl = img.ImageUrl,
+                    SortOrder = img.SortOrder,
+                    IsPrimary = img.IsPrimary
+                }).ToList()
+
             };
 
 
             await _productService.AddProductAsync(newProduct);
             return CreatedAtAction(nameof(GetProductById), new { id = newProduct.ProductId }, newProduct);
+
         }
 
-
-
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product productUpdate)
-        //{
-        //    var product = await _productService.GetProductByIdAsync(id);
-
-        //    if (product == null)
-        //    {
-        //        return NotFound("Product not found");
-        //    }
-        //    product.Name = productUpdate.Name;
-        //    product.Description = productUpdate.Description;
-        //    product.Price = productUpdate.Price;
-        //    product.StockQuantity = productUpdate.StockQuantity;
-        //    product.CategoryId = productUpdate.CategoryId;
-
-
-
-        //     await _productService.UpdateProductAsync(product);
-        //    return NoContent();
-        //}
-
-
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductDto dto)
-        //{
-        //    var product = await _productService.GetProductByIdAsync(id);
-        //    if (product == null) return NotFound();
-
-        //    product.Product=dto.ProductId; 
-        //    product.Name = dto.Name;
-        //    product.Description = dto.Description;
-        //    product.Price = dto.Price;
-        //    product.StockQuantity = dto.StockQuantity;
-        //    product.CategoryId = dto.CategoryId;
-
-        //    // Update images similarly if needed
-        //    // ...
-
-        //    await _productService.UpdateProductAsync(product);
-        //    return NoContent();
-        //}
         [HttpPut("{productId}")]
         public async Task<IActionResult> UpdateProduct(int productId, [FromBody] UpdateProductDto updateDto)
         {
@@ -123,7 +71,7 @@ namespace E_commerce.Controllers
             // Create a real Product domain model to pass to UpdateProductAsync
             var updatedProduct = new Product
             {
-                ProductId = productId,
+                //ProductId = productId,
                 Name = updateDto.Name,
                 Description = updateDto.Description,
                 Price = updateDto.Price,
